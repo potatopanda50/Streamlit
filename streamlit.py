@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-from gsheetsdb import connect
-
 sheet_id = st.secrets["gsheets"]["sheet_id"]
 
 sheet_name = "Sheet1"
