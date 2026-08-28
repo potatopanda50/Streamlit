@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GallopingWinds — Web Racing Demo</title>
+<style>
+:root{font-family:Inter,system-ui,sans-serif;color:#18233a;background:#edf7ff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#dff4ff,#fff4dd);min-height:100vh}
+button,input{font:inherit}.wrap{max-width:1100px;margin:auto;padding:18px}.card{background:#ffffffd9;border:1px solid #ffffff;border-radius:24px;box-shadow:0 18px 50px #4772a322;padding:20px}.hidden{display:none}
+h1,h2,p{margin-top:0}.top{display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-weight:900;font-size:24px}.badge{background:#e8f1ff;border-radius:999px;padding:7px 11px;font-size:13px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.hero{min-height:380px;background:linear-gradient(145deg,#86d9ff,#fff0ac);border-radius:22px;position:relative;overflow:hidden;padding:22px}
+.hero:after{content:"";position:absolute;inset:auto -10% -22% -10%;height:55%;background:#76bd5d;transform:skewY(-5deg)}
+.runner{position:absolute;left:11%;bottom:22%;width:88px;height:150px;z-index:2;animation:bob .8s infinite alternate ease-in-out}
+.head{width:54px;height:54px;border-radius:50%;background:#ffd5bf;margin:auto;border:4px solid #543d67}.hair{position:absolute;width:66px;height:40px;background:#6f4aa5;border-radius:35px 35px 20px 20px;left:11px;top:-4px}.ear{position:absolute;width:14px;height:28px;background:#6f4aa5;top:-15px;border-radius:70% 30% 30% 70%}.ear.r{right:7px;transform:scaleX(-1)}.ear.l{left:7px}.body{width:62px;height:72px;background:#fff;border:5px solid #4769c7;border-radius:16px 16px 20px 20px;margin:-2px auto 0}.leg{position:absolute;width:18px;height:60px;background:#304470;border-radius:12px;bottom:-45px}.leg.a{left:25px;transform:rotate(10deg)}.leg.b{right:25px;transform:rotate(-10deg)}@keyframes bob{to{transform:translateY(-6px) rotate(-1deg)}}
+.panel{display:flex;flex-direction:column;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field input{padding:12px 14px;border:1px solid #ccd7ea;border-radius:12px;background:#fff}
+.btn{border:0;border-radius:13px;padding:12px 16px;font-weight:800;cursor:pointer;background:#315fe8;color:white}.btn.alt{background:#eef3ff;color:#3153a6}.btn.danger{background:#feeceb;color:#b13434}.row{display:flex;gap:10px;flex-wrap:wrap}
+.characters,.rooms,.players{display:grid;gap:10px}.char,.room,.player{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f6f9ff;border:1px solid #e4ebf8;border-radius:14px;padding:12px}.char.sel{outline:3px solid #8fb0ff}
+.avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#a6dcff,#d7b8ff);display:grid;place-items:center;font-weight:900}
+.trackbox{background:#93d8ff;border-radius:22px;padding:18px;overflow:hidden}.track{position:relative;height:360px;background:linear-gradient(90deg,#d89262,#c8754c);border-radius:18px;overflow:hidden;border:10px solid #f6e1bd}.lane{position:absolute;left:0;right:0;height:20%;border-bottom:2px dashed #fff9}.racer{position:absolute;width:44px;height:30px;border-radius:16px;background:#fff;border:4px solid #4656c8;display:grid;place-items:center;font-size:18px;transition:left .08s linear}.finish{position:absolute;right:45px;top:0;bottom:0;width:12px;background:repeating-conic-gradient(#222 0 25%,#fff 0 50%) 0/12px 12px}
+.hud{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}.meter{background:#e8edf7;border-radius:999px;height:14px;overflow:hidden}.meter i{display:block;height:100%;background:#5a78ed;width:100%}.meter.stam i{background:#38b775}
+.big{font-size:42px;font-weight:900}.center{text-align:center}.small{font-size:13px;color:#64708a}.status{font-weight:800;color:#4661b9}
+</style>
+<body><div class="wrap">
+<div class="top"><div class="brand">GallopingWinds</div><div class="badge">Playable web prototype</div></div>
+
+<section id="login" class="card grid" style="margin-top:16px">
+  <div class="hero"><div class="runner"><div class="head"><div class="hair"></div><span class="ear l"></span><span class="ear r"></span></div><div class="body"></div><span class="leg a"></span><span class="leg b"></span></div><h1>Race beyond the wind.</h1><p>Anime-style competitive running prototype.</p></div>
+  <form id="loginForm" class="panel"><h2>Login</h2><div class="field"><label>Username</label><input id="user" value="Player1" required></div><div class="field"><label>Password</label><input type="password" value="demo1234" required></div><button class="btn">Login</button><p class="small">Demo login is local only.</p></form>
+</section>
+
+<section id="select" class="card hidden" style="margin-top:16px"><h2>Character Selection</h2><div id="chars" class="characters"></div><div class="row" style="margin-top:14px"><button id="createChar" class="btn alt">Create Character</button><button id="toLobby" class="btn">Enter Lobby</button></div></section>
+
+<section id="creator" class="card hidden" style="margin-top:16px"><h2>Create Character</h2><div class="grid"><div class="panel"><div class="field"><label>Name</label><input id="charName" value="Aoi"></div><div class="field"><label>Hair</label><input id="hair" type="color" value="#7355a4"></div><div class="field"><label>Outfit</label><input id="outfit" type="color" value="#4169e1"></div><div class="row"><button id="saveChar" class="btn">Save</button><button id="cancelChar" class="btn alt">Cancel</button></div></div><div class="hero" style="min-height:270px"><div class="runner" style="left:42%;bottom:25%"><div class="head"><div class="hair" id="hairPreview"></div><span class="ear l"></span><span class="ear r"></span></div><div class="body" id="bodyPreview"></div><span class="leg a"></span><span class="leg b"></span></div></div></div></section>
+
+<section id="lobby" class="card hidden" style="margin-top:16px"><div class="top"><div><h2 style="margin-bottom:4px">Game Lobby</h2><div class="small">Create or join a room.</div></div><button id="newRoom" class="btn">Create Room</button></div><div id="rooms" class="rooms" style="margin-top:14px"></div></section>
+
+<section id="room" class="card hidden" style="margin-top:16px"><div class="top"><div><h2 style="margin-bottom:4px">Room: Sky Sprint</h2><div class="small">Leader can add bots and kick players.</div></div><div class="status" id="readyCount">0/1 ready</div></div><div id="players" class="players" style="margin-top:14px"></div><div class="row" style="margin-top:14px"><button id="readyBtn" class="btn">Ready</button><button id="addBot" class="btn alt">Add Bot</button><button id="startBtn" class="btn" disabled>Start Race</button><button id="leaveRoom" class="btn danger">Leave</button></div></section>
+
+<section id="race" class="card hidden" style="margin-top:16px"><div class="top"><div><h2 style="margin-bottom:4px">400m Sprint</h2><div class="small">Alternate LEFT / RIGHT. Keyboard: A/D or ←/→.</div></div><div class="big" id="countdown"></div></div><div class="trackbox"><div class="track" id="track"><div class="finish"></div></div></div><div class="hud"><div><b>Speed</b><div class="meter"><i id="speedBar"></i></div></div><div><b>Stamina</b><div class="meter stam"><i id="stamBar"></i></div></div></div><div class="row" style="justify-content:center;margin-top:16px"><button id="leftStep" class="btn alt" style="min-width:130px">LEFT</button><button id="rightStep" class="btn" style="min-width:130px">RIGHT</button></div></section>
+
+<section id="results" class="card hidden center" style="margin-top:16px"><div class="big" id="place">1st</div><h2>Race Complete!</h2><p id="resultText"></p><button id="backLobby" class="btn">Back to Lobby</button></section>
+</div>
+<script>
+const S=id=>document.getElementById(id), screens=['login','select','creator','lobby','room','race','results']; const show=x=>screens.forEach(s=>S(s).classList.toggle('hidden',s!==x));
+let username='Player1', characters=[{name:'Hikari',level:12},{name:'New Character',empty:true},{name:'New Character',empty:true}], selected=0;
+function drawChars(){S('chars').innerHTML='';characters.forEach((c,i)=>{const d=document.createElement('div');d.className='char'+(i===selected?' sel':'');d.innerHTML=`<div class="row"><div class="avatar">${c.empty?'+':c.name[0]}</div><div><b>${c.name}</b><div class="small">${c.empty?'Empty slot':'Level '+c.level}</div></div></div><button class="btn alt">${c.empty?'Create':'Select'}</button>`;d.querySelector('button').onclick=()=>{if(c.empty){show('creator')}else{selected=i;drawChars()}};S('chars').appendChild(d)})}
+S('loginForm').onsubmit=e=>{e.preventDefault();username=S('user').value||'Player1';drawChars();show('select')};S('createChar').onclick=()=>show('creator');S('cancelChar').onclick=()=>show('select');S('hair').oninput=e=>S('hairPreview').style.background=e.target.value;S('outfit').oninput=e=>S('bodyPreview').style.borderColor=e.target.value;
+S('saveChar').onclick=()=>{const name=S('charName').value.trim()||'Runner';const idx=characters.findIndex(x=>x.empty);if(idx>=0)characters[idx]={name,level:1};selected=idx<0?0:idx;drawChars();show('select')};S('toLobby').onclick=()=>{drawRooms();show('lobby')};
+let roomPlayers=[], myReady=false;
+function drawRooms(){S('rooms').innerHTML='';[['Sky Sprint','2/8'],['Academy Dash','4/8'],['Sunset Trial','1/8']].forEach(([n,c])=>{const d=document.createElement('div');d.className='room';d.innerHTML=`<div><b>${n}</b><div class="small">${c} runners • Casual</div></div><button class="btn alt">Join</button>`;d.querySelector('button').onclick=enterRoom;S('rooms').appendChild(d)})}
+function enterRoom(){roomPlayers=[{name:username,bot:false,ready:false,leader:true}];myReady=false;drawPlayers();show('room')}
+S('newRoom').onclick=enterRoom;S('leaveRoom').onclick=()=>show('lobby');
+function drawPlayers(){S('players').innerHTML='';roomPlayers.forEach((p,i)=>{const d=document.createElement('div');d.className='player';d.innerHTML=`<div class="row"><div class="avatar">${p.bot?'B':p.name[0]}</div><div><b>${p.name}</b><div class="small">${p.leader?'Leader • ':''}${p.bot?'Bot':p.ready?'Ready':'Not ready'}</div></div></div>${i?'<button class="btn danger">Kick</button>':''}`;if(i)d.querySelector('button').onclick=()=>{roomPlayers.splice(i,1);drawPlayers()};S('players').appendChild(d)});const ready=roomPlayers.filter(p=>p.ready||p.bot).length;S('readyCount').textContent=`${ready}/${roomPlayers.length} ready`;S('startBtn').disabled=!(roomPlayers.length>0&&ready===roomPlayers.length);S('readyBtn').textContent=myReady?'Not Ready':'Ready'}
+S('readyBtn').onclick=()=>{myReady=!myReady;roomPlayers[0].ready=myReady;drawPlayers()};S('addBot').onclick=()=>{if(roomPlayers.length<8)roomPlayers.push({name:'Bot '+roomPlayers.length,bot:true,ready:true});drawPlayers()};S('startBtn').onclick=startRace;
+let raceState=null, loop=null;
+function startRace(){show('race');S('track').querySelectorAll('.racer').forEach(x=>x.remove());raceState=roomPlayers.map((p,i)=>({name:p.name,bot:p.bot,pos:0,speed:0,stam:100,last:'',lane:i}));raceState.forEach((r,i)=>{const e=document.createElement('div');e.className='racer';e.id='r'+i;e.style.top=(8+i*11)+'%';e.textContent=i===0?'★':'◆';S('track').appendChild(e)});let c=3;S('countdown').textContent=c;const ct=setInterval(()=>{c--;S('countdown').textContent=c>0?c:'GO!';if(c<=0){clearInterval(ct);runLoop()}},700)}
+function step(side){if(!raceState)return;const r=raceState[0];if(r.last===side){r.speed=Math.max(0,r.speed-1.8);r.stam=Math.max(0,r.stam-3)}else{r.speed=Math.min(12,r.speed+1.25);r.stam=Math.max(0,r.stam-1.25);r.last=side}}
+S('leftStep').onclick=()=>step('L');S('rightStep').onclick=()=>step('R');addEventListener('keydown',e=>{if(S('race').classList.contains('hidden'))return;if(e.key==='a'||e.key==='ArrowLeft')step('L');if(e.key==='d'||e.key==='ArrowRight')step('R')});
+function runLoop(){clearInterval(loop);loop=setInterval(()=>{raceState.forEach((r,i)=>{if(r.bot){r.speed=Math.min(10.6,r.speed+.25+Math.random()*.12);r.stam=Math.max(0,r.stam-.18)} else {r.speed=Math.max(0,r.speed-.08);if(r.speed<7)r.stam=Math.min(100,r.stam+.05)}const fatigue=.55+.45*(r.stam/100);r.pos+=r.speed*fatigue*.055;S('r'+i).style.left=Math.min(88,r.pos/400*88)+'%'});S('speedBar').style.width=Math.min(100,raceState[0].speed/12*100)+'%';S('stamBar').style.width=raceState[0].stam+'%';if(raceState.some(r=>r.pos>=400)){clearInterval(loop);finishRace()}},55)}
+function finishRace(){const ordered=[...raceState].sort((a,b)=>b.pos-a.pos);const place=ordered.findIndex(r=>r===raceState[0])+1;S('place').textContent=place+(place===1?'st':place===2?'nd':place===3?'rd':'th');S('resultText').textContent=`${raceState[0].name} finished against ${raceState.length-1} opponent(s).`;show('results')}
+S('backLobby').onclick=()=>{drawRooms();show('lobby')}
+</script>
+</html>
